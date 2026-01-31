@@ -119,7 +119,6 @@ async function showBookDetails(idOfBook) {
     bookInfo.appendChild(bookDescripton);
   } catch (error) {
     console.error('Помилка при завантаженні книг:', error);
-    return [];
   }
 }
 
