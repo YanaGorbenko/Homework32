@@ -1,8 +1,8 @@
 const api = axios.create({
-  baseURL: 'https://6971cf4a32c6bacb12c49096.mockapi.io/books',
+  baseURL: 'https://6971cf4a32c6bacb12c49096.mockapi.io',
 });
 
-const BASE_URL = 'https://6971cf4a32c6bacb12c49096.mockapi.io/books';
+const BASE_URL = 'https://6971cf4a32c6bacb12c49096.mockapi.io';
 
 const root = document.getElementById('root');
 const titleOfPage = document.createElement('h1');
@@ -33,11 +33,10 @@ bookContainer.appendChild(bookInfo);
 async function getBooks() {
   try {
     createLoader('Завантаження...', bookList);
-    const { data } = await api.get(BASE_URL);
+    const { data } = await api.get(`${BASE_URL}/books`);
     renderBookList(data);
   } catch (error) {
     console.error('Помилка при завантаженні книг:', error);
-    return [];
   }
 }
 
@@ -97,7 +96,7 @@ function createLoader(text, place) {
 async function showBookDetails(idOfBook) {
   createLoader('Завантаження...', bookInfo);
   try {
-    const { data } = await api.get(`${BASE_URL}/${idOfBook}`);
+    const { data } = await api.get(`${BASE_URL}/books/${idOfBook}`);
     bookInfo.innerHTML = '';
     const bookTitle = document.createElement('h2');
     bookTitle.className = 'book-title';
@@ -265,7 +264,7 @@ function showAddBookForm() {
           description: descriptionInput.value.trim(),
         };
 
-        await api.post(BASE_URL, newBook);
+        await api.post(`${BASE_URL}/books`, newBook);
         await getBooks();
         message();
       } catch (error) {
@@ -278,7 +277,7 @@ function showAddBookForm() {
 async function deleteBook(bookID) {
   createLoader('Видалення книги...', bookInfo);
   try {
-    await api.delete(`${BASE_URL}/${bookID}`);
+    await api.delete(`${BASE_URL}/books/${bookID}`);
     await getBooks();
     deleteMessage();
   } catch (error) {
@@ -288,7 +287,7 @@ async function deleteBook(bookID) {
 
 async function editBook(idOfBook) {
   try {
-    const { data } = await api.get(`${BASE_URL}/${idOfBook}`);
+    const { data } = await api.get(`${BASE_URL}/books/${idOfBook}`);
     const { form, titleInput, authorInput, yearInput, descriptionInput } =
       createForm(data.title, data.author, data.year, data.description);
 
@@ -310,7 +309,7 @@ async function editBook(idOfBook) {
         };
         try {
           createLoader('Редагування книги...', bookInfo);
-          await api.put(`${BASE_URL}/${idOfBook}`, bookData);
+          await api.put(`${BASE_URL}/books/${idOfBook}`, bookData);
           await getBooks();
           editMessage();
         } catch (error) {
@@ -354,8 +353,8 @@ function editMessage() {
 
 newBookButton.addEventListener('click', showAddBookForm);
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   getBooks().then(books => {
-    console.log('Книги загружены:', books);
+    console.log('Книги завантажені:', books);
   });
 });
